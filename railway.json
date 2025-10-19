@@ -2,7 +2,7 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "dockerfilePath": "Dockerfile",
+    "dockerfilePath": "Dockerfile.railway",
     "buildArgs": {
       "BUILDKIT_INLINE_CACHE": "1"
     }
@@ -10,7 +10,7 @@
   "deploy": {
     "startCommand": "/start.sh",
     "healthcheckPath": "/",
-    "healthcheckTimeout": 600,
+    "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
