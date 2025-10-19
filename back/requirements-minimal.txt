@@ -17,5 +17,8 @@ Pillow
 # HTTP client for healthcheck
 requests
 
+# Database URL parsing for Railway
+dj-database-url
+
 # Note: Heavy ML dependencies will be installed at runtime
 # to reduce build time and avoid timeouts

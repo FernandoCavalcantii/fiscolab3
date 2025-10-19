@@ -10,6 +10,25 @@ from psycopg2 import OperationalError
 
 def wait_for_db():
     """Wait for database to be available."""
+    # Debug: Print environment variables
+    print(f"POSTGRES_HOST: {os.getenv('POSTGRES_HOST', 'NOT_SET')}")
+    print(f"POSTGRES_PORT: {os.getenv('POSTGRES_PORT', 'NOT_SET')}")
+    print(f"POSTGRES_USER: {os.getenv('POSTGRES_USER', 'NOT_SET')}")
+    print(f"POSTGRES_DB: {os.getenv('POSTGRES_DB', 'NOT_SET')}")
+    
+    # Try to get database URL from Railway
+    database_url = os.getenv('DATABASE_URL')
+    if database_url:
+        print(f"Using DATABASE_URL: {database_url[:20]}...")
+        try:
+            conn = psycopg2.connect(database_url)
+            conn.close()
+            print("Database is ready!")
+            return True
+        except Exception as e:
+            print(f"Database URL connection failed: {e}")
+    
+    # Fallback to individual environment variables
     db_config = {
         'host': os.getenv('POSTGRES_HOST', 'localhost'),
         'port': os.getenv('POSTGRES_PORT', '5432'),
