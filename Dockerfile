@@ -1,0 +1,106 @@
+# Multi-stage build for Railway deployment
+FROM node:18-alpine AS frontend-builder
+
+# Set working directory for frontend
+WORKDIR /app/front
+
+# Copy frontend package files
+COPY front/package*.json ./
+COPY front/pnpm-lock.yaml ./
+
+# Install pnpm and dependencies
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
+# Copy frontend source code
+COPY front/ .
+
+# Set environment variables for production build
+ENV NODE_ENV=production
+ENV GENERATE_SOURCEMAP=false
+
+# Build frontend
+RUN pnpm run build
+
+# Python backend stage
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        postgresql-client \
+        build-essential \
+        libpq-dev \
+        tesseract-ocr \
+        tesseract-ocr-por \
+        poppler-utils \
+        nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY back/requirements.txt .
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt --timeout 120 --retries 5
+
+# Pre-download the sentence transformer model during build
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('neuralmind/bert-base-portuguese-cased')"
+
+# Copy backend code
+COPY back/ .
+
+# Copy built frontend from previous stage
+COPY --from=frontend-builder /app/front/build /app/staticfiles/
+
+# Create nginx configuration
+RUN echo 'server {\n\
+    listen 80;\n\
+    server_name _;\n\
+    \n\
+    location / {\n\
+        try_files $uri $uri/ @django;\n\
+    }\n\
+    \n\
+    location @django {\n\
+        proxy_pass http://127.0.0.1:8000;\n\
+        proxy_set_header Host $host;\n\
+        proxy_set_header X-Real-IP $remote_addr;\n\
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+        proxy_set_header X-Forwarded-Proto $scheme;\n\
+    }\n\
+    \n\
+    location /static/ {\n\
+        alias /app/staticfiles/;\n\
+        expires 1y;\n\
+        add_header Cache-Control "public, immutable";\n\
+    }\n\
+    \n\
+    location /media/ {\n\
+        alias /app/media/;\n\
+        expires 1y;\n\
+        add_header Cache-Control "public, immutable";\n\
+    }\n\
+}' > /etc/nginx/sites-available/default
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+# Start nginx in background\n\
+nginx\n\
+\n\
+# Start Django application\n\
+python manage.py migrate\n\
+python manage.py collectstatic --noinput\n\
+python manage.py runserver 0.0.0.0:8000' > /start.sh && chmod +x /start.sh
+
+# Expose port
+EXPOSE 80
+
+# Run the application
+CMD ["/start.sh"]
