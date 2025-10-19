@@ -42,6 +42,10 @@ DATABASES = {
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Ensure STATIC_ROOT is properly configured
+if not os.path.exists(STATIC_ROOT):
+    os.makedirs(STATIC_ROOT, exist_ok=True)
+
 # Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
