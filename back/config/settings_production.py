@@ -41,6 +41,8 @@ DATABASES = {
         'OPTIONS': {
             'sslmode': 'require',
         },
+        'CONN_MAX_AGE': 0,  # Disable connection pooling
+        'CONN_HEALTH_CHECKS': True,
     }
 }
 

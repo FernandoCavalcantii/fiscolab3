@@ -92,9 +92,9 @@ set -e\n\
 # Start nginx in background\n\
 nginx\n\
 \n\
-# Wait for database (Railway provides this)\n\
+# Wait for database with proper connection test\n\
 echo "Waiting for database..."\n\
-sleep 15\n\
+python wait_for_db.py\n\
 \n\
 # Run migrations with error handling\n\
 echo "Running migrations..."\n\
