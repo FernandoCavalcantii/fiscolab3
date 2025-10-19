@@ -30,14 +30,15 @@ if os.getenv('CUSTOM_DOMAIN'):
     ALLOWED_HOSTS.append(os.getenv('CUSTOM_DOMAIN'))
 
 # Database configuration for Railway PostgreSQL
+# Use SQLite as fallback if no database is configured
 if os.getenv('DATABASE_URL'):
     # Use DATABASE_URL if available (Railway standard)
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
     }
-else:
-    # Fallback to individual environment variables
+elif os.getenv('POSTGRES_HOST'):
+    # Use individual environment variables if available
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -51,6 +52,14 @@ else:
             },
             'CONN_MAX_AGE': 0,  # Disable connection pooling
             'CONN_HEALTH_CHECKS': True,
+        }
+    }
+else:
+    # Fallback to SQLite for Railway deployment
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
