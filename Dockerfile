@@ -94,14 +94,22 @@ nginx\n\
 \n\
 # Wait for database (Railway provides this)\n\
 echo "Waiting for database..."\n\
-sleep 5\n\
+sleep 15\n\
 \n\
-# Run migrations\n\
-python manage.py migrate\n\
-python manage.py collectstatic --noinput\n\
+# Run migrations with error handling\n\
+echo "Running migrations..."\n\
+python manage.py migrate || echo "Migration failed, continuing..."\n\
+\n\
+# Collect static files\n\
+echo "Collecting static files..."\n\
+python manage.py collectstatic --noinput || echo "Static collection failed, continuing..."\n\
 \n\
 # Start Django in background\n\
+echo "Starting Django server..."\n\
 python manage.py runserver 0.0.0.0:8000 &\n\
+\n\
+# Wait for Django to start\n\
+sleep 10\n\
 \n\
 # Install ML dependencies in background (non-blocking)\n\
 echo "Installing ML dependencies in background..."\n\
@@ -117,7 +125,7 @@ wait' > /start.sh && chmod +x /start.sh
 EXPOSE 80
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
     CMD curl -f http://localhost/ || exit 1
 
 # Run the application

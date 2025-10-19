@@ -19,6 +19,8 @@ PORT = os.getenv('PORT', 8000)
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '0.0.0.0',
+    '*',  # Allow all hosts for Railway
     os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),
     os.getenv('RAILWAY_STATIC_URL', ''),
 ]
@@ -56,7 +58,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
 # CORS settings for production
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     f"https://{domain}" for domain in ALLOWED_HOSTS if domain
 ]
