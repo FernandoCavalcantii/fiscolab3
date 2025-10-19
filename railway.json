@@ -12,6 +12,7 @@
     "healthcheckPath": "/",
     "healthcheckTimeout": 900,
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 3
+    "restartPolicyMaxRetries": 3,
+    "port": 80
   }
 }
