@@ -92,18 +92,21 @@ RUN echo '#!/bin/bash\n\
 # Start nginx in background\n\
 nginx\n\
 \n\
-# Install heavy ML dependencies at runtime to avoid build timeout\n\
-echo "Installing ML dependencies..."\n\
-pip install torch --index-url https://download.pytorch.org/whl/cpu\n\
-pip install sentence-transformers langchain langchain-community tiktoken chromadb langchain-openai langchain-chroma langchain-core langchain-huggingface\n\
-pip install openai rapidfuzz pypdf PyPDF2 pytesseract pdf2image\n\
-\n\
-# Wait for database and run migrations\n\
+# Wait for database and run migrations first (fast startup)\n\
 python manage.py migrate\n\
 python manage.py collectstatic --noinput\n\
 \n\
-# Start Django application\n\
-python manage.py runserver 0.0.0.0:8000' > /start.sh && chmod +x /start.sh
+# Start Django application (ML dependencies will be installed on first use)\n\
+python manage.py runserver 0.0.0.0:8000 &\n\
+\n\
+# Install heavy ML dependencies in background to avoid healthcheck timeout\n\
+echo "Installing ML dependencies in background..."\n\
+pip install torch --index-url https://download.pytorch.org/whl/cpu &\n\
+pip install sentence-transformers langchain langchain-community tiktoken chromadb langchain-openai langchain-chroma langchain-core langchain-huggingface &\n\
+pip install openai rapidfuzz pypdf PyPDF2 pytesseract pdf2image &\n\
+\n\
+# Wait for Django to start\n\
+wait' > /start.sh && chmod +x /start.sh
 
 # Expose port
 EXPOSE 80
