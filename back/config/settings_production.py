@@ -29,39 +29,14 @@ ALLOWED_HOSTS = [
 if os.getenv('CUSTOM_DOMAIN'):
     ALLOWED_HOSTS.append(os.getenv('CUSTOM_DOMAIN'))
 
-# Database configuration for Railway PostgreSQL
-# Use SQLite as fallback if no database is configured
-if os.getenv('DATABASE_URL'):
-    # Use DATABASE_URL if available (Railway standard)
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+# Database configuration for Railway
+# Force SQLite for now to avoid PostgreSQL connection issues
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-elif os.getenv('POSTGRES_HOST'):
-    # Use individual environment variables if available
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'railway'),
-            'USER': os.getenv('POSTGRES_USER', 'postgres'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-            'PORT': os.getenv('POSTGRES_PORT', '5432'),
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
-            'CONN_MAX_AGE': 0,  # Disable connection pooling
-            'CONN_HEALTH_CHECKS': True,
-        }
-    }
-else:
-    # Fallback to SQLite for Railway deployment
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # Static files configuration for Railway
 STATIC_URL = '/static/'
