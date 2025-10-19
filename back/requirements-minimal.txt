@@ -14,5 +14,8 @@ drf-yasg
 # Basic image processing
 Pillow
 
+# HTTP client for healthcheck
+requests
+
 # Note: Heavy ML dependencies will be installed at runtime
 # to reduce build time and avoid timeouts
