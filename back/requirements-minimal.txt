@@ -1,0 +1,18 @@
+# Core Django dependencies
+asgiref==3.9.1
+Django==5.2.4
+psycopg2-binary==2.9.10
+python-dotenv==1.1.1
+sqlparse==0.5.3
+tzdata==2025.2
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.1
+djangorestframework-simplejwt==5.5.1
+djoser
+drf-yasg
+
+# Basic image processing
+Pillow
+
+# Note: Heavy ML dependencies will be installed at runtime
+# to reduce build time and avoid timeouts
