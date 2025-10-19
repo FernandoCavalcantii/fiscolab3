@@ -9,7 +9,7 @@ import DesafiosCard from '../components/common/DesafiosCard';
 import TesteCertificacaoCard from '../components/common/TesteCertificacaoCard';
 import styles from './TrailsPanel.module.css';
 
-const RenderList = ({ items }: { items: ItemDaListaAninhada[] }) => {
+const RenderList = ({ items, key }: { items: ItemDaListaAninhada[], key?: string | number }) => {
   return (
     <ul className={styles.mainList}>
       {items.map((item, index) => {

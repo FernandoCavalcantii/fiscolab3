@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.01d2ee51.css",
-    "main.js": "/static/js/main.16bed717.js",
+    "main.js": "/static/js/main.fbe18f17.js",
     "static/media/Video_Compet_Superior.mp4": "/static/media/Video_Compet_Superior.d77272fe09a550dcd47d.mp4",
     "static/media/PROIND-card-programa.png": "/static/media/PROIND-card-programa.464402e07cd5ded21c05.png",
     "static/media/PROIND-card-trilha02.png": "/static/media/PROIND-card-trilha02.fc941bcc0b42d0cfee90.png",
@@ -22,10 +22,10 @@
     "static/media/Logo-colorida.png": "/static/media/Logo-colorida.08b25db3002fa813d81c.png",
     "index.html": "/index.html",
     "main.01d2ee51.css.map": "/static/css/main.01d2ee51.css.map",
-    "main.16bed717.js.map": "/static/js/main.16bed717.js.map"
+    "main.fbe18f17.js.map": "/static/js/main.fbe18f17.js.map"
   },
   "entrypoints": [
     "static/css/main.01d2ee51.css",
-    "static/js/main.16bed717.js"
+    "static/js/main.fbe18f17.js"
   ]
 }

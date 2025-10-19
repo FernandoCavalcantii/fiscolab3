@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styles from './TrailCard.module.css';
 
 type TrailCardProps = {
+  key?: string;
   link: string;
   imageSrc: string;
   title: string;
